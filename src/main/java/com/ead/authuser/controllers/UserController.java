@@ -87,4 +87,19 @@ public class UserController {
         }
     }
 
+    @PutMapping("/{userId}")
+    public ResponseEntity<Object> updateImage(@PathVariable UUID userId,
+                                              @JsonView(UserDto.UserView.ImagePut.class) UserDto userDto) {
+        Optional<UserModel> userModelOptional = userService.findById(userId);
+        if (!userModelOptional.isPresent()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+        } else {
+            var userModel = userModelOptional.get();
+            userModel.setImageUrl(userDto.getImageUrl());
+            userModel.setLastUpdateDate(LocalDateTime.now(ZoneId.of("UTC")));
+            userService.save(userModel);
+            return ResponseEntity.status(HttpStatus.OK).body(userModel);
+        }
+    }
+
 }
