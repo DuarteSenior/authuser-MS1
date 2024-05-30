@@ -16,7 +16,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @RestController
-@CrossOrigin(origins = "*",maxAge = 3600)
+@CrossOrigin(origins = "*", maxAge = 3600)
 @RequestMapping("/users")
 public class UserController {
 
@@ -25,14 +25,14 @@ public class UserController {
 
 
     @GetMapping
-    public ResponseEntity<List<UserModel>> getAllUsers(){
+    public ResponseEntity<List<UserModel>> getAllUsers() {
         return ResponseEntity.status(HttpStatus.OK).body(userService.findAll());
     }
 
     @GetMapping("/{userId}")
-    public ResponseEntity<Object> getOneUser(@PathVariable UUID userId){
+    public ResponseEntity<Object> getOneUser(@PathVariable UUID userId) {
         Optional<UserModel> userModelOptional = userService.findById(userId);
-        if (!userModelOptional.isPresent()){
+        if (!userModelOptional.isPresent()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
         } else {
             return ResponseEntity.status(HttpStatus.OK).body(userModelOptional.get());
@@ -41,9 +41,9 @@ public class UserController {
     }
 
     @DeleteMapping("/{userId}")
-    public ResponseEntity<Object> deleteUser(@PathVariable UUID userId){
+    public ResponseEntity<Object> deleteUser(@PathVariable UUID userId) {
         Optional<UserModel> userModelOptional = userService.findById(userId);
-        if (!userModelOptional.isPresent()){
+        if (!userModelOptional.isPresent()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
         } else {
             userService.delete(userModelOptional.get());
@@ -53,9 +53,9 @@ public class UserController {
 
     @PutMapping("/{userId}")
     public ResponseEntity<Object> updateUser(@PathVariable UUID userId,
-                                             @JsonView(UserDto.UserView.UserPut.class) UserDto userDto){
+                                             @JsonView(UserDto.UserView.UserPut.class) UserDto userDto) {
         Optional<UserModel> userModelOptional = userService.findById(userId);
-        if (!userModelOptional.isPresent()){
+        if (!userModelOptional.isPresent()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
         } else {
             var userModel = userModelOptional.get();
@@ -69,5 +69,22 @@ public class UserController {
         }
     }
 
+    @PutMapping("/{userId}")
+    public ResponseEntity<Object> updatePassword(@PathVariable UUID userId,
+                                                 @JsonView(UserDto.UserView.PaswordPut.class) UserDto userDto) {
+        Optional<UserModel> userModelOptional = userService.findById(userId);
+        if (!userModelOptional.isPresent()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+        }
+        if (!userModelOptional.get().getPassword().equals(userDto.getOldPassword())) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Mismatched old password");
+        } else {
+            var userModel = userModelOptional.get();
+            userModel.setPassword(userDto.getPassword());
+            userModel.setLastUpdateDate(LocalDateTime.now(ZoneId.of("UTC")));
+            userService.save(userModel);
+            return ResponseEntity.status(HttpStatus.OK).body("Password updates successfully");
+        }
+    }
 
 }
