@@ -69,7 +69,7 @@ public class UserController {
         }
     }
 
-    @PutMapping("/{userId}")
+    @PutMapping("/{userId}/password")
     public ResponseEntity<Object> updatePassword(@PathVariable UUID userId,
                                                  @JsonView(UserDto.UserView.PaswordPut.class) UserDto userDto) {
         Optional<UserModel> userModelOptional = userService.findById(userId);
@@ -87,7 +87,7 @@ public class UserController {
         }
     }
 
-    @PutMapping("/{userId}")
+    @PutMapping("/{userId}/image")
     public ResponseEntity<Object> updateImage(@PathVariable UUID userId,
                                               @JsonView(UserDto.UserView.ImagePut.class) UserDto userDto) {
         Optional<UserModel> userModelOptional = userService.findById(userId);
