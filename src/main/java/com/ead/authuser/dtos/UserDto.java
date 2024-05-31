@@ -30,22 +30,22 @@ public class UserDto {
     private UUID userId;
 
     @NotBlank(groups = UserView.RegistrationPost.class)
-    @Size(min = 4, max = 50)
+    @Size(min = 4, max = 50, groups = UserView.RegistrationPost.class)
     @JsonView(UserView.RegistrationPost.class)
     private String username;
 
     @NotBlank(groups = UserView.RegistrationPost.class)
-    @Email
+    @Email(groups = UserView.RegistrationPost.class)
     @JsonView(UserView.RegistrationPost.class)
     private String email;
 
     @NotBlank(groups = {UserView.RegistrationPost.class, UserView.PaswordPut.class})
-    @Size(min = 6, max = 20)
+    @Size(min = 6, max = 20, groups = {UserView.RegistrationPost.class, UserView.PaswordPut.class})
     @JsonView({UserView.RegistrationPost.class, UserView.PaswordPut.class})
     private String password;
 
     @NotBlank(groups = UserView.PaswordPut.class)
-    @Size(min = 6, max = 20)
+    @Size(min = 6, max = 20, groups = UserView.PaswordPut.class)
     @JsonView(UserView.PaswordPut.class)
     private String oldPassword;
 
